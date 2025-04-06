@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Age Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+</head>
+<body>
+  <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
+
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="calculator.html">Calculator</a>
+      <a href="history.html">History</a>
+      <a href="feedback.html">Feedback</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="calculator-section animate__animated animate__fadeIn">
+      <div class="calculator-container">
+        <h2 class="animate__animated animate__fadeInDown">Enter your Date of Birth</h2>
+
+        <div class="input-container animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+          <input type="date" id="dob" required />
+          <div class="button-group">
+            <button onclick="calculateAge()" class="calculate-btn">Calculate</button>
+            <button onclick="clearAge()" class="calculate-btn">Clear</button>
+          </div>
+          <p id="error-message" style="color: red; display: none; margin-top: 5px;">
+            Please select your date of birth.
+          </p>
+        </div>
+
+        <div class="result-container">
+          <p class="result-title animate__animated animate__fadeIn" style="animation-delay: 0.4s">Your Age:</p>
+
+          <div class="age-boxes">
+            <div class="age-box animate__animated animate__zoomIn" style="animation-delay: 0.5s">
+              <span id="years" class="age-number">0</span>
+              <span class="age-label">Years</span>
+            </div>
+
+            <div class="age-box animate__animated animate__zoomIn" style="animation-delay: 0.6s">
+              <span id="months" class="age-number">0</span>
+              <span class="age-label">Months</span>
+            </div>
+
+            <div class="age-box animate__animated animate__zoomIn" style="animation-delay: 0.7s">
+              <span id="days" class="age-number">0</span>
+              <span class="age-label">Days</span>
+            </div>
+          </div>
+
+          <p id="countdown" class="countdown animate__animated animate__fadeIn" style="animation-delay: 0.8s"></p>
+
+          <div class="birthday-cake animate__animated animate__bounceIn" style="animation-delay: 1s; display: none;">
+            <div class="cake-base">
+              <div class="cake-top"></div>
+              <div class="candle">
+                <div class="flame"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function calculateAge() {
+      const dobInput = document.getElementById("dob");
+      const dobValue = dobInput.value;
+      const errorMessage = document.getElementById("error-message");
+
+      if (!dobValue) {
+        errorMessage.style.display = "block";
+        return;
+      } else {
+        errorMessage.style.display = "none";
+      }
+
+      const dob = new Date(dobValue);
+      const today = new Date();
+
+      let years = today.getFullYear() - dob.getFullYear();
+      let months = today.getMonth() - dob.getMonth();
+      let days = today.getDate() - dob.getDate();
+
+      if (days < 0) {
+        months--;
+        const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        days += prevMonth.getDate();
+      }
+
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      document.getElementById("years").textContent = years;
+      document.getElementById("months").textContent = months;
+      document.getElementById("days").textContent = days;
+
+      const isBirthday = dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
+      const cake = document.querySelector(".birthday-cake");
+      cake.style.display = isBirthday ? "block" : "none";
+
+      const nextBirthday = new Date(today.getFullYear(), dob.getMonth(), dob.getDate());
+      if (nextBirthday < today) {
+        nextBirthday.setFullYear(today.getFullYear() + 1);
+      }
+
+      const diff = nextBirthday - today;
+      const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+      document.getElementById("countdown").textContent = isBirthday
+        ? "🎉 Happy Birthday!"
+        : `🎂 ${daysLeft} day(s) left until your next birthday.`;
+    }
+
+    function clearAge() {
+      document.getElementById("dob").value = "";
+      document.getElementById("years").textContent = "0";
+      document.getElementById("months").textContent = "0";
+      document.getElementById("days").textContent = "0";
+      document.getElementById("countdown").textContent = "";
+      document.querySelector(".birthday-cake").style.display = "none";
+      document.getElementById("error-message").style.display = "none";
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+    }
+  </script>
+</body>
+</html>
